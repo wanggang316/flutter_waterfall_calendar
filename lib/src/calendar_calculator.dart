@@ -1,9 +1,16 @@
 enum CalendarDayState { normal, selected }
 
-class CalendarDay {
-  String day;
-  CalendarDayState state;
+class Day {
+  final DateTime date;
+  CalendarDayState state = CalendarDayState.normal;
+
+  Day(this.date);
 }
+
+extension DescExtension on Day {
+  String get desc => this.date.day.toString();
+}
+
 
 class CalendarCalculator {
   final int startYear;
@@ -14,7 +21,7 @@ class CalendarCalculator {
   final double itemHeight;
   final double secitonHeaderHeight;
 
-  List<List<String>> data;
+  List<List<Day>> data;
 
   int _currentMonthSection = 0;
 
@@ -37,9 +44,6 @@ class CalendarCalculator {
       int month = (monthNum % 12 == 0) ? 12 : (monthNum % 12);
       DateTime currentMonth = DateTime.parse("$year${_fullMonthDesc(month)}01");
 
-      if (currentMonth.year == 2020) {
-        print("");
-      }
       if (currentMonth.year == now.year && currentMonth.month == now.month) {
         _currentMonthSection = index;
       }
@@ -48,8 +52,9 @@ class CalendarCalculator {
       int startWeekday = this
           .getStartWeekday(year: currentMonth.year, month: currentMonth.month);
       int startSpace = (7 == startWeekday) ? 0 : startWeekday;
-      List<String> days = List.generate(startSpace + daysInMonth, (index) {
-        return index < startSpace ? null : (index - startSpace + 1).toString();
+      List<Day> days = List.generate(startSpace + daysInMonth, (index) {
+        DateTime date = DateTime(currentMonth.year, currentMonth.month, index - startSpace + 1);
+        return index < startSpace ? null : Day(date);
       });
       return days;
     });
@@ -72,7 +77,7 @@ class CalendarCalculator {
   }
 
   String getItemDesc({int section, int index}) {
-    return data[section][index];
+    return data[section][index]?.desc;
   }
 
   int getStartWeekday({int year, int month}) {
@@ -144,74 +149,3 @@ class CalendarCalculator {
     return leapYear;
   }
 }
-
-// class CalendarMonthCalculator {
-//   final int year;
-//   final int month;
-
-//   List<String> days;
-
-//   CalendarMonthCalculator({this.year, this.month}) {
-//     days = List();
-//     int startSpace = (7 == this.startWeekday) ? 0 : this.startWeekday;
-//     int daysInMonth = this.daysInMonth(month, year);
-//     for (int i = 0; i < startSpace + daysInMonth; i++) {
-//       days.add(i < startSpace ? null : (i - startSpace + 1).toString());
-//     }
-//   }
-
-//   String getDayDesc(int index) {
-//     return days[index];
-//     // int startSpace = (7 == this.startWeekday) ? 0 : this.startWeekday;
-
-//     // return index < startSpace ? null : (index - startSpace + 1).toString();
-//   }
-
-//   int get startWeekday {
-//     return DateTime.parse("$year${_fullMonthDesc}01").weekday;
-//   }
-
-//   int get girdCount {
-//     return days.length;
-//     // int startSpace = (7 == this.startWeekday) ? 0 : this.startWeekday;
-//     // return startSpace + daysInMonth(month, year);
-//   }
-
-//   String get _fullMonthDesc {
-//     return month < 10 ? "0$month" : "$month";
-//   }
-
-//   daysInMonth(int monthNum, int year) {
-//     List<int> monthLength = new List(12);
-
-//     monthLength[0] = 31;
-//     monthLength[2] = 31;
-//     monthLength[4] = 31;
-//     monthLength[6] = 31;
-//     monthLength[7] = 31;
-//     monthLength[9] = 31;
-//     monthLength[11] = 31;
-//     monthLength[3] = 30;
-//     monthLength[8] = 30;
-//     monthLength[5] = 30;
-//     monthLength[10] = 30;
-
-//     if (leapYear(year) == true)
-//       monthLength[1] = 29;
-//     else
-//       monthLength[1] = 28;
-
-//     return monthLength[monthNum - 1];
-//   }
-
-//   leapYear(int year) {
-//     bool leapYear = false;
-
-//     bool leap = ((year % 100 == 0) && (year % 400 != 0));
-//     if (leap == true)
-//       leapYear = false;
-//     else if (year % 4 == 0) leapYear = true;
-
-//     return leapYear;
-//   }
-// }

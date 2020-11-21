@@ -11,6 +11,10 @@ class WaterfallCalendar extends StatefulWidget {
 }
 
 class _WaterfallCalendarState extends State<WaterfallCalendar> {
+
+  DateTime selectedBegin;
+  DateTime selectedEnd;
+
   CalendarCalculator calculator;
 
   ScrollController controller;
@@ -41,9 +45,11 @@ class _WaterfallCalendarState extends State<WaterfallCalendar> {
               child: ListView.builder(
                   controller: controller,
                   scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  addAutomaticKeepAlives: true,
+                  // shrinkWrap: true,
+                  // addAutomaticKeepAlives: true,
                   itemCount: calculator.getSectionCount(),
+                  itemExtent: 370,
+                  cacheExtent: 300,
                   itemBuilder: (context, index) {
                     return buildMonthView(index);
                   }))
